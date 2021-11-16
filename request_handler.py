@@ -4,6 +4,33 @@ from posts import get_all_posts, get_single_post, delete_post, create_post, upda
 
 
 class HandleRequests(BaseHTTPRequestHandler):
+
+    def parse_url(self, path):
+        path_params = path.split("/")
+        resource = path_params[1]
+
+        # Check if there is a query string parameter
+        if "?" in resource:
+            param = resource.split("?")[1]
+            resource = resource.split("?")[0]
+            pair = param.split("=")
+            key = pair[0]
+            value = pair[1]
+
+            return (resource, key, value)
+        # No query string parameter
+        else:
+            id = None
+
+            try:
+                id = int(path_params[2])
+            except IndexError:
+                pass  # No route parameter exists: /animals
+            except ValueError:
+                pass  # Request had trailing slash: /animals/
+
+            return (resource, id)
+
     # Jon B: Setting the headers for our request handler
     def _set_headers(self, status):
         self.send_response(status)
@@ -21,8 +48,25 @@ class HandleRequests(BaseHTTPRequestHandler):
                          'X-Requested-With, Content-Type, Accept')
         self.end_headers()
 
+    def do_GET(self):
+        self._set_headers(200)
 
-# We are missing do_PUT, do_GET, do_DELETE, do_POST
+        response = {}
+
+        parsed = self.parse_url(self.path)
+
+        if len(parsed) == 2:
+            (resource, id) = parsed
+
+            if resource == "posts":
+                if id is not None:
+                    response = f"{get_single_post(id)}"
+                else:
+                    response = f"{get_all_posts()}"
+
+        self.wfile.write(f"{response}".encode())
+    # We are missing do_PUT, do_DELETE, do_POST
+
 
 def main():
     host = ''
