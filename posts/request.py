@@ -102,7 +102,6 @@ def update_post(id, new_post):
         db_cursor.execute("""
         UPDATE Post
             SET
-                id = ?,
                 user_id = ?,
                 category_id = ?,
                 title = ?,
