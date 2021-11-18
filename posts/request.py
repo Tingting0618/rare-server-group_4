@@ -21,7 +21,7 @@ def get_all_posts():
             p.image_url,
             p.content,
             p.approved
-        FROM Posts p
+        FROM posts p
         """)
         posts = []
         dataset = db_cursor.fetchall()
@@ -50,17 +50,14 @@ def get_single_post(id):
             p.image_url,
             p.content,
             p.approved
-        FROM Post p
+        FROM posts p
         WHERE p.id = ?
         """, (id, ))
-
         data = db_cursor.fetchone()
-
         post = Post(data['id'], data['user_id'],
                     data['category_id'], data['title'],
                     data['publication_date'], data['image_url'],
-                    data['content'], data['approved']
-                    )
+                    data['content'], data['approved'])
         return json.dumps(post.__dict__)
 
 
@@ -69,7 +66,7 @@ def create_post(new_post):
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
-        INSERT INTO Post
+        INSERT INTO posts
             (user_id, category_id, title, publication_date, 
             image_url, content, approved )
         VALUES
@@ -90,7 +87,7 @@ def delete_post(id):
     with sqlite3.connect("./rare.db") as conn:
         db_cursor = conn.cursor()
         db_cursor.execute("""
-        DELETE FROM post
+        DELETE FROM posts
         WHERE id = ?
         """, (id, ))
 
@@ -100,7 +97,7 @@ def update_post(id, new_post):
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
-        UPDATE Post
+        UPDATE posts
             SET
                 user_id = ?,
                 category_id = ?,
@@ -110,7 +107,7 @@ def update_post(id, new_post):
                 content = ?,
                 approved = ?
         WHERE id = ?
-        """, (new_post['category_id'], new_post['title'],
+        """, (new_post['user_id'], new_post['category_id'], new_post['title'],
               new_post['publication_date'], new_post['image_url'],
               new_post['content'], new_post['approved'], id, ))
 
