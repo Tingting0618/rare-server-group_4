@@ -65,7 +65,52 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_all_posts()}"
 
         self.wfile.write(f"{response}".encode())
-    # We are missing do_PUT, do_DELETE, do_POST
+
+    def do_POST(self):
+        self._set_headers(201)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+
+        post_body = json.loads(post_body)
+
+        (resource, id) = self.parse_url(self.path)
+
+        new_post = None
+
+        if resource == "posts":
+            new_post = create_post(post_body)
+
+        self.wfile.write(f"{new_post}".encode())
+
+    def do_PUT(self):
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+
+        (resource, id) = self.parse_url(self.path)
+
+        success = False
+
+        if resource == "posts":
+            success = update_post(id, post_body)
+
+        if success:
+            self._set_headers(204)
+        else:
+            self._set_headers(404)
+
+        self.wfile.write("".encode())
+
+    def do_DELETE(self):
+
+        self._set_headers(204)
+
+        (resource, id) = self.parse_url(self.path)
+
+        if resource == "posts":
+            delete_post(id)
+
+        self.wfile.write("".encode())
 
 
 def main():
