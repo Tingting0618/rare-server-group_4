@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from posts import get_all_posts, get_single_post, delete_post, create_post, update_post
-from users import get_all_users, get_single_user
+from users import get_all_users, get_single_user, create_user, login_user
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -74,7 +74,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.wfile.write(f"{response}".encode())
 
     def do_POST(self):
-        self._set_headers(201)
+        # self._set_headers(201)
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
 
@@ -84,7 +84,34 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         new_post = None
 
-        if resource == "posts":
+        if self.path == '/login':
+            user = login_user(post_body)
+            if user:
+                new_post = {
+                    'valid': True,
+                    'token': user.id
+                }
+                self._set_headers(200)
+            else:
+                new_post = { 'valid': False }
+                self._set_headers(404)
+
+        if self.path == '/register':
+            try:
+                new_user = create_user(post_body)
+                new_post = {
+                    'valid': True,
+                    'token': new_user.id
+                }
+                self._set_headers(201)
+            except Exception as e:
+                new_post = {
+                    'valid': False,
+                    'error': str(e)
+                }
+                self._set_headers(400)
+
+        if new_post == "posts":
             new_post = create_post(post_body)
 
         self.wfile.write(f"{new_post}".encode())
