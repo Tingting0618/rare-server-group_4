@@ -4,11 +4,6 @@ from models import User
 
 Users = []
 
-import sqlite3
-
-from models import User
-
-
 def create_user(post_data):
     new_user = User(**post_data)
 
@@ -75,10 +70,10 @@ def get_all_users():
         dataset = db_cursor.fetchall()
 
     for row in dataset:
-        user = User(row['id'], row['first_name'], row['last_name'], row['email'],
-                    row['bio'], row['username'], row['password'],
-                    row['profile_image_url'], row['created_on'], row['active'])
-        users.append(user.__dict__)
+        user = User(**row)
+        user_dict = user.__dict__
+        user_dict["created_on"] = str(user.created_on)
+        users.append(user_dict)
     return json.dumps(users)
 
 def get_single_user(id):
@@ -176,6 +171,6 @@ def delete_user(id):
         db_cursor = conn.cursor()
 
         db_cursor.execute("""
-        DELETE FROM user
+        DELETE FROM Users
         WHERE id = ?
         """, (id, ))
