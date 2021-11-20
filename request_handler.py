@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from posts import get_all_posts, get_single_post, delete_post, create_post, update_post
+from users import get_all_users, get_single_user
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -63,6 +64,12 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_post(id)}"
                 else:
                     response = f"{get_all_posts()}"
+            
+            if resource == "users":
+                if id is not None:
+                    response = f"{get_single_user(id)}"
+                else:
+                    response = f"{get_all_users()}"
 
         self.wfile.write(f"{response}".encode())
 
