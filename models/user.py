@@ -1,10 +1,19 @@
+from datetime import datetime
+
 class User():
 
-    def __init__(self, first_name,last_name,username,email = "", password = "", is_staff=0,id=None):
+    def __init__(self, first_name, last_name, email, username,
+                bio='', password='', profile_image_url='',
+                created_on=None, active=True, id=None):
         self.id = id
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
-        self.username = email
+        self.bio = bio
+        self.username = username
         self.password = password
-        self.is_staff = is_staff
+        self.profile_image_url = profile_image_url
+        self.created_on = created_on or datetime.now()
+        self.active = active
+
+# new_user = User()
