@@ -20,7 +20,6 @@ CREATE TABLE "DemotionQueue" (
   PRIMARY KEY (action, admin_id, approver_one_id)
 );
 
-
 CREATE TABLE "Subscriptions" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "follower_id" INTEGER,
@@ -83,6 +82,7 @@ CREATE TABLE "Categories" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "label" varchar
 );
+-- DROP TABLE Categories
 
 INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
@@ -100,4 +100,16 @@ Values (
         '',
         1
     );
-DELETE FROM Users;
+--DELETE FROM Users;
+
+INSERT INTO Posts
+Values (
+        1,
+        1,
+        1,
+        'Test 1 Title',
+        '2021-08-09',
+        '',
+        'propane123',
+        True
+    );
