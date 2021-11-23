@@ -87,3 +87,17 @@ CREATE TABLE "Categories" (
 INSERT INTO Categories ('label') VALUES ('News');
 INSERT INTO Tags ('label') VALUES ('JavaScript');
 INSERT INTO Reactions ('label', 'image_url') VALUES ('happy', 'https://pngtree.com/so/happy');
+INSERT INTO Users
+Values (
+        1,
+        'Hank',
+        'Hill',
+        'hankhill@propane.net',
+        'I sell propane and propane accessories',
+        'MrBiggs',
+        'propane123',
+        '',
+        '',
+        1
+    );
+DELETE FROM Users;

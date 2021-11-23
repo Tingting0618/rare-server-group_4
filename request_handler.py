@@ -1,7 +1,8 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from posts import get_all_posts, get_single_post, delete_post, create_post, update_post
-from users import get_all_users, get_single_user, create_user, login_user
+from users import get_all_users, get_single_user, create_user, login_user, delete_user
+# from users.request import delete_user
 
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -114,7 +115,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         if new_post == "posts":
             new_post = create_post(post_body)
 
-        self.wfile.write(f"{new_post}".encode())
+        self.wfile.write(json.dumps(new_post).encode())
 
     def do_PUT(self):
         content_len = int(self.headers.get('content-length', 0))
@@ -143,6 +144,9 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         if resource == "posts":
             delete_post(id)
+
+        if resource == "users":
+            delete_user(id)
 
         self.wfile.write("".encode())
 
