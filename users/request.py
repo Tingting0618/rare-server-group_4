@@ -1,44 +1,48 @@
-USERS = [
-    # {
-    #     "id": 1,
-    #     "name": "Snickers",
-    #     "species": "Dog",
-    #     "locationId": 1,
-    #     "customerId": 4
-    # },
-    {'id': 1, 
-    'first_name': 'Snickers', 
-    'last_name': 'Dog', 
-    'email': '123@me.com', 
-    'username': '123', 
-    'password': '123', 
-    'is_staff': 1
-    },
-    {'id': 2, 
-    'first_name': 'Lenny', 
-    'last_name': 'Cat', 
-    'email': '123@me.com', 
-    'username': '123', 
-    'password': '123', 
-    'is_staff': 0
-    }
-]
+import sqlite3
+from models import User
+
+def create_user(post_data):
+
+    new_user = User(**post_data)
+  
+    with sqlite3.connect("./rare.db") as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+            INSERT INTO Users (
+            id,first_name,last_name,email,
+            username,password,is_staff
+            ) VALUES(?,?,?,?,?,?,?);
+        """, (
+            new_user.id,
+            new_user.first_name,
+            new_user.last_name,
+            new_user.email,
+            new_user.username,
+            new_user.password,
+            new_user.is_staff,
+        ))
+    
+        id=db_cursor.lastrowid
+        new_user.id=id 
+
+    return new_user
 
 
-def get_all_users():
-    return USERS
+def login_user(user_data):
+    with sqlite3.connect("./rare.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor() 
+        db_cursor.execute("""
+            select *from Users u
+            where
+            u.username = ?
+            and 
+            u.password = ?;
+        """, (user_data['username'], user_data['password']))
 
-# Function with a single parameter
-def get_single_user(id):
-    # Variable to hold the found user, if it exists
-    requested_user = None
+        result = db_cursor.fetchone()
 
-    # Iterate the ANIMALS list above. Very similar to the
-    # for..of loops you used in JavaScript.
-    for user in USERS:
-        # Dictionaries in Python use [] notation to find a key
-        # instead of the dot notation that JavaScript used.
-        if user["id"] == id:
-            requested_user = user
-
-    return requested_user
+        if not result:
+            return None
+        else:
+            return User(**result)
