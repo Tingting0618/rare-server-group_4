@@ -101,9 +101,7 @@ def get_single_user(id):
         dataset = db_cursor.fetchone()
 
     # for row in dataset:
-        user = User(dataset['first_name'], dataset['last_name'], dataset['email'],
-                    dataset['bio'], dataset['username'], dataset['password'],
-                    dataset['profile_image_url'], dataset['created_on'], dataset['active'], dataset['id'])
+        user = User(**dataset)
     
     return json.dumps(user.__dict__)
 
@@ -120,9 +118,9 @@ def get_profile_details():
             u.email,
             u.bio,
             u.username,
-            u.profile_img_url,
+            u.password
+            u.profile_image_url,
             u.created_on,
-            u.active
         FROM user u
         """)
 
@@ -130,9 +128,7 @@ def get_profile_details():
         dataset = db_cursor.fetchall()
 
     for row in dataset:
-        user = User(row['id'], row['first_name'], row['last_name'], row['email'],
-                    row['bio'], row['username'], row['profile_image_url'], 
-                    row['created_on'], row['active'])
+        user = User(**row)
 
     return json.dumps(profiles)
 
